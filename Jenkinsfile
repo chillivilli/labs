@@ -19,25 +19,21 @@ pipeline {
                }
              }
          }
-         stage('Run tests in container') {
-             parallel(UnitTest: {
-                steps {
+         stage('Run parallels tests in with containers') {
+            steps {
+             parallel(
+                UnitTest: {
                   script { 
-                   docker.image("${image}:${env.BUILD_ID}").inside() {sh 'echo "$BRANCH_NAME"'}
-                }
-             }  
-         }, LoadTest: {
-                steps {
+                   docker.image("${image}:${env.BUILD_ID}").withRun() {sh 'echo its a Unit test'}
+                  }
+                }, 
+                LoadTest: {
                   script { 
-                   docker.image("${image}:${env.BUILD_ID}").inside() {sh 'echo "$BRANCH_NAME"'}
+                   docker.image("${image}:${env.BUILD_ID}").withRun() {sh 'echo its a Load Test'}
+                  }  
                 }
-             }  
-})
-             steps {
-               script { 
-                   docker.image("${image}:${env.BUILD_ID}").inside() {sh 'echo "$BRANCH_NAME"'}
-                }
-             }  
+             )
+           } 
         } 
     }
     
