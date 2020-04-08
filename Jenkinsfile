@@ -7,9 +7,6 @@ pipeline {
             steps {
               checkout([$class: 'GitSCM', branches: [[name: 'origin/master']],
               userRemoteConfigs: [[url: 'https://github.com/chillivilli/labs.git']]])  
-              echo 'echo "${GIT_BRANCH}"'
-              sh  'echo $BRANCH_NAME'
-              echo 'Pulling... ' + env.GIT_BRANCH
               echo 'Pulling2..' + env.BRANCH_NAME
             }
          }
@@ -23,6 +20,19 @@ pipeline {
              }
          }
          stage('Run tests in container') {
+             parallel(UnitTest: {
+                steps {
+                  script { 
+                   docker.image("${image}:${env.BUILD_ID}").inside() {sh 'echo "$BRANCH_NAME"'}
+                }
+             }  
+         }, LoadTest: {
+                steps {
+                  script { 
+                   docker.image("${image}:${env.BUILD_ID}").inside() {sh 'echo "$BRANCH_NAME"'}
+                }
+             }  
+})
              steps {
                script { 
                    docker.image("${image}:${env.BUILD_ID}").inside() {sh 'echo "$BRANCH_NAME"'}
