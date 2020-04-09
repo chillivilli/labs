@@ -1,7 +1,6 @@
 def image         = "php-test-ms" 
 def imageidInside = "${image}:${env.BRANCH_NAME}-${env.BUILD_ID}"
 def branchId      = "${env.BRANCH_NAME} ${env.BUILD_ID}"
-def branch        = "${env.BRANCH_NAME}"
 def registry      = "privateregystry.local/php-test-ms"
 def credentials   = "secret"
 
@@ -37,7 +36,7 @@ pipeline {
               }
                    steps {
                      script{
-                          def imagePush = docker.build("${image}:${env.BUILD_ID}", '--build-arg BRANCH_NAME="${branch}" .')
+                          def imagePush = docker.build("${image}:${env.BUILD_ID}", '--build-arg BRANCH_NAME="${env.BRANCH_NAME}" .')
                         // docker.image("${image}:${env.BUILD_ID}").run()
                           docker.image("${image}:${env.BUILD_ID}").inside() {
                           sh "uptime"
@@ -52,7 +51,7 @@ pipeline {
                }
                    steps {
                      script{
-                          def imagePush = docker.build("${image}:${env.BUILD_ID}", '--build-arg BRANCH_NAME="${branch}"  .')
+                          def imagePush = docker.build("${image}:${env.BUILD_ID}", '--build-arg BRANCH_NAME="${env.BRANCH_NAME}"  .')
                           // docker.image("${image}:${env.BUILD_ID}").run()
                           docker.image("${image}:${env.BUILD_ID}").inside() {
                           sh "uptime"
