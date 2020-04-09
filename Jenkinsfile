@@ -36,11 +36,11 @@ pipeline {
               }
                    steps {
                      script{
-                          def imagePush = docker.build("${image}:${env.BUILD_ID}", "--build-arg BRANCH_NAME=${env.BRANCH_NAME} .")
+                          def imagePush = docker.build("${image}:${env.BUILD_ID}", "--build-arg BRANCH_NAME=${env.BRANCH_NAME} --build-arg ENV=test .")
                         // docker.image("${image}:${env.BUILD_ID}").run()
                           docker.image("${image}:${env.BUILD_ID}").inside() {
                           sh "uptime"
-                          echo '\$BRANCH_NAME'
+                          echo '$ENV'
                    }              
                  }
              }
@@ -51,11 +51,11 @@ pipeline {
                }
                    steps {
                      script{
-                          def imagePush = docker.build("${image}:${env.BUILD_ID}", "--build-arg BRANCH_NAME=${env.BRANCH_NAME}  .")
+                          def imagePush = docker.build("${image}:${env.BUILD_ID}", "--build-arg BRANCH_NAME=${env.BRANCH_NAME} --build-arg ENV=stage .")
                           // docker.image("${image}:${env.BUILD_ID}").run()
                           docker.image("${image}:${env.BUILD_ID}").inside() {
                           sh "uptime"
-                          echo '\$BRANCH_NAME'
+                          echo '$ENV'
                     }              
                  }
              }
