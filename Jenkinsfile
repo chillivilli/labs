@@ -29,7 +29,7 @@ pipeline {
                 branch 'master'
              }
              steps { 
-                sh 'ansible -i hosts redis-stage-env -m command -a '/usr/bin/redis-cli FLUSHALL''
+                sh 'ansible -i hosts redis-stage-env -m command -a \'/usr/bin/redis-cli FLUSHALL\''
               }
          }
          stage('Build and some test container with test arg') {
