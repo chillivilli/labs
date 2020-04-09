@@ -1,3 +1,5 @@
+#!/usr/bin/env groovy
+
 def image         = "php-test-ms" 
 def imageidInside = "${image}:${env.BRANCH_NAME}-${env.BUILD_ID}"
 def branchId      = "${env.BRANCH_NAME} ${env.BUILD_ID}"
