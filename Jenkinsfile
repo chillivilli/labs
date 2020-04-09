@@ -32,7 +32,7 @@ pipeline {
          }
          stage('Build and some test container with test arg') {
              when {
-               branch 'slave'
+               branch 'develop'
               }
                    steps {
                      script{
