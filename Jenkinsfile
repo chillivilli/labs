@@ -1,6 +1,7 @@
 def image         = "php-test-ms" 
 def imageidInside = "${image}:${env.BRANCH_NAME}-${env.BUILD_ID}"
 def branchId      = "${env.BRANCH_NAME} ${env.BUILD_ID}"
+def branch        = "${env.BRANCH_NAME}"
 def registry      = "privateregystry.local/php-test-ms"
 def credentials   = "secret"
 
@@ -32,7 +33,7 @@ pipeline {
          }
          stage('Build and some test container with test arg') {
              when {
-               branch 'master'
+               branch 'slave'
               }
                    steps {
                      script{
