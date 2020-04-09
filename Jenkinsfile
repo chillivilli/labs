@@ -52,7 +52,7 @@ pipeline {
                      // docker.image("${image}:${env.BUILD_ID}").run()
                           docker.image("${image}:${env.BUILD_ID}").inside() {
                           sh "uptime"
-                          echo ""\$BRANCH_NAME"
+                          echo '\$BRANCH_NAME'
                    }              
                }
              }
