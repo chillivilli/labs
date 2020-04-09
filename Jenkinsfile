@@ -31,30 +31,33 @@ pipeline {
               }
          }
          stage('Build and some test container with test arg') {
-             steps {
-                 script{
-                   def imagePush = docker.build("${image}:${env.BUILD_ID}", '--build-arg BRANCH_NAME="${branch}" .')
-                  // docker.image("${image}:${env.BUILD_ID}").run()
-                       docker.image("${image}:${env.BUILD_ID}").inside() {
-                          sh "uptime"
-                          echo '\$BRANCH_NAME'
-                   }              
-               }
-             }
-         }
-         stage('Build and some test container with prod arg') {
-             steps {
-                 when {
-                    branch 'master'
-                 }
+             when {
+               branch 'master'
+              }
+                   steps {
                      script{
-                          def imagePush = docker.build("${image}:${env.BUILD_ID}", '--build-arg BRANCH_NAME="${branch}" -ENV=prod .')
-                     // docker.image("${image}:${env.BUILD_ID}").run()
+                          def imagePush = docker.build("${image}:${env.BUILD_ID}", '--build-arg BRANCH_NAME="${branch}" .')
+                        // docker.image("${image}:${env.BUILD_ID}").run()
                           docker.image("${image}:${env.BUILD_ID}").inside() {
                           sh "uptime"
                           echo '\$BRANCH_NAME'
                    }              
+                 }
+             }
+         }
+         stage('Build and some test container with prod arg') {
+               when {
+                 branch 'master'
                }
+                   steps {
+                     script{
+                          def imagePush = docker.build("${image}:${env.BUILD_ID}", '--build-arg BRANCH_NAME="${branch}" -ENV=prod .')
+                          // docker.image("${image}:${env.BUILD_ID}").run()
+                          docker.image("${image}:${env.BUILD_ID}").inside() {
+                          sh "uptime"
+                          echo '\$BRANCH_NAME'
+                    }              
+                 }
              }
          }
          stage('DB Migrations on test env') {
