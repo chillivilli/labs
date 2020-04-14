@@ -41,7 +41,7 @@ pipeline {
                           def imagePush = docker.build("${image}:${env.BUILD_ID}", "--build-arg BRANCH_NAME=${env.BRANCH_NAME} --build-arg ENV=test .")
                         // docker.image("${image}:${env.BUILD_ID}").run()
                           docker.image("${image}:${env.BUILD_ID}").inside() {
-                          sh "uptime"
+                          sh "hostname && uptime "
                           sh 'echo '$ENV_VAR''
                    }
                  }
@@ -93,25 +93,26 @@ pipeline {
               parallel(
                 UnitTest: {
                   script {
-                    docker.image("${image}:${env.BUILD_ID}").withRun() {
+                    docker.image("${image}:${env.BUILD_ID}").inside() {
                         sh 'echo its a Unit test'
+                        sh 'env'
                     }
                   }
                 },
                 FunctionTest: {
                   script {
-                    docker.image("${image}:${env.BUILD_ID}").withRun() {
+                    docker.image("${image}:${env.BUILD_ID}").inside() {
                         sh 'echo its a Function Test'
-                        sh 'uptime'
+                        sh 'env'
                         echo '\$BRANCH_NAME'
                     }
                   }
                },
                OtherTest: {
                    script {
-                       docker.image("${image}:${env.BUILD_ID}").withRun() {
+                       docker.image("${image}:${env.BUILD_ID}").inside( -p 89:80 -e CHK=xm) {
                         sh 'echo its a Regress or other Test'
-                        sh 'uptime'
+                        sh 'env'
                         sh 'exit 0'
                     }
                    }
