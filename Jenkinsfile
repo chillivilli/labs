@@ -1,18 +1,18 @@
 #!/usr/bin/env groovy
 
-def image         = "php-test-ms" 
+def image         = "php-test-ms"
 def imageidInside = "${image}:${env.BRANCH_NAME}-${env.BUILD_ID}"
 def branchId      = "${env.BRANCH_NAME} ${env.BUILD_ID}"
 def registry      = "privateregystry.local/php-test-ms"
 def credentials   = "secret"
 
 pipeline {
-    agent any 
+    agent any
        stages {
          stage('Cloning dockerfiles, configs and others...') {
             steps {
               checkout([$class: 'GitSCM', branches: [[name: 'origin/master']],
-              userRemoteConfigs: [[url: 'https://github.com/chillivilli/labs.git']]])  
+              userRemoteConfigs: [[url: 'https://github.com/chillivilli/labs.git']]])
               echo 'Successfully pulling branch: '+"${branchId}"
             }
          }
@@ -20,7 +20,7 @@ pipeline {
              when {
                 branch 'develop'
              }
-             steps { 
+             steps {
                 sh "ansible -i hosts redis-test-env -m command -a '/usr/bin/redis-cli FLUSHALL'"
               }
          }
@@ -28,7 +28,7 @@ pipeline {
              when {
                 branch 'master'
              }
-             steps { 
+             steps {
                 sh 'ansible -i hosts redis-stage-env -m command -a \'/usr/bin/redis-cli FLUSHALL\''
               }
          }
@@ -42,8 +42,8 @@ pipeline {
                         // docker.image("${image}:${env.BUILD_ID}").run()
                           docker.image("${image}:${env.BUILD_ID}").inside() {
                           sh "uptime"
-                          echo '$ENV'
-                   }              
+                          echo '$ENV_VAR'
+                   }
                  }
              }
          }
@@ -57,8 +57,8 @@ pipeline {
                           // docker.image("${image}:${env.BUILD_ID}").run()
                           docker.image("${image}:${env.BUILD_ID}").inside() {
                           sh "uptime"
-                          echo '$ENV'
-                    }              
+                          echo '$ENV_VAR'
+                    }
                  }
              }
          }
@@ -69,8 +69,8 @@ pipeline {
                  steps {
                     script {
                         docker.image("${image}:${env.BUILD_ID}").withRun() {
-                        sh 'echo its DB migration, like bin/console doctrine:migrations:migrate' 
-                        sh 'exit 0'        
+                        sh 'echo its DB migration, like bin/console doctrine:migrations:migrate'
+                        sh 'exit 0'
                     }
                  }
              }
@@ -82,8 +82,8 @@ pipeline {
                 steps {
                      script {
                         docker.image("${image}:${env.BUILD_ID}").withRun() {
-                        sh 'echo its DB migration, like bin/console doctrine:migrations:migrate' 
-                        sh 'exit 0'        
+                        sh 'echo its DB migration, like bin/console doctrine:migrations:migrate'
+                        sh 'exit 0'
                     }
                  }
              }
@@ -92,20 +92,20 @@ pipeline {
             steps {
               parallel(
                 UnitTest: {
-                  script { 
+                  script {
                     docker.image("${image}:${env.BUILD_ID}").withRun() {
                         sh 'echo its a Unit test'
                     }
                   }
-                }, 
+                },
                 FunctionTest: {
-                  script { 
+                  script {
                     docker.image("${image}:${env.BUILD_ID}").withRun() {
                         sh 'echo its a Function Test'
                         sh 'uptime'
                         echo '\$BRANCH_NAME'
                     }
-                  }  
+                  }
                },
                OtherTest: {
                    script {
@@ -117,23 +117,23 @@ pipeline {
                    }
                }
              )
-           } 
-        } 
+           }
+        }
          stage('Run push image into private registry') {
              steps {
-               echo '$hostname'  
+               echo '$hostname'
              }
          }
     }
-    
-    post { 
-        always { 
+
+    post {
+        always {
             cleanWs()
             sh '''
             echo "Stop all containers"
-            docker ps --all | grep '"${image}"' | awk '{print $1}' 
+            docker ps --all | grep '"${image}"' | awk '{print $1}'
             docker system prune -a -f
             '''
         }
-    }    
+    }
 }
