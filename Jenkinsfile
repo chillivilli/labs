@@ -110,7 +110,7 @@ pipeline {
                },
                OtherTest: {
                    script {
-                       docker.image("${image}:${env.BUILD_ID}").inside( -p 89:80 -e CHK=xm) {
+                       docker.image("${image}:${env.BUILD_ID}").inside(" -p 89:80 -e CHK=xm ") {
                         sh 'echo its a Regress or other Test'
                         sh 'env'
                         sh 'exit 0'
