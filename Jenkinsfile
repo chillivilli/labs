@@ -42,7 +42,7 @@ pipeline {
                         // docker.image("${image}:${env.BUILD_ID}").run()
                           docker.image("${image}:${env.BUILD_ID}").inside() {
                           sh "hostname && uptime "
-                          sh 'echo '$ENV_VAR''
+                          sh 'echo "$ENV"'
                    }
                  }
              }
@@ -57,7 +57,7 @@ pipeline {
                           // docker.image("${image}:${env.BUILD_ID}").run()
                           docker.image("${image}:${env.BUILD_ID}").inside() {
                           sh "uptime"
-                          sh 'echo '$ENV_VAR''
+                          sh 'echo "$ENV"'
                     }
                  }
              }
